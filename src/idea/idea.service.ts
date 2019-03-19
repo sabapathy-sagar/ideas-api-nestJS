@@ -32,11 +32,13 @@ export class IdeaService {
     // using Partial on IdeaDTO as the user may update 
     // either the idea or description or both.
     async update (id: string, data: Partial<IdeaDTO>) {
-        const idea = await this.ideaRepository.findOne({ where: {id} });
+        let idea = await this.ideaRepository.findOne({ where: {id} });
         if (!idea) {
             throw new HttpException('Not found', HttpStatus.NOT_FOUND);
         }
         await this.ideaRepository.update({ id }, data);
+        //return updated idea
+        idea = await this.ideaRepository.findOne({ where: {id} });
         return idea;
     }
 
