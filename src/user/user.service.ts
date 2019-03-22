@@ -22,7 +22,7 @@ export class UserService {
             throw new HttpException('Invalid username/password', HttpStatus.BAD_REQUEST);
         }
 
-        return user.toResponseObject();
+        return user.toResponseObject(true);
     }
     async register (data: UserDTO) {
         const { username } = data;
@@ -35,6 +35,6 @@ export class UserService {
 
         user = await this.userRepository.create(data);
         await this.userRepository.save(user);
-        return user.toResponseObject();
+        return user.toResponseObject(true);
     }
 }

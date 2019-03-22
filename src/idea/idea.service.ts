@@ -3,22 +3,26 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { IdeaEntity } from './idea.entity';
 import { Repository } from 'typeorm';
 import { IdeaDTO } from './idea.dto';
+import { UserEntity } from 'src/user/user.entity';
 
 @Injectable()
 export class IdeaService {
     constructor(
         @InjectRepository(IdeaEntity)
         private ideaRepository: Repository<IdeaEntity>,
+        @InjectRepository(UserEntity)
+        private userRepository: Repository<UserEntity>
     ){}
 
     async showAll () {
-        return await this.ideaRepository.find();
+        return await this.ideaRepository.find({ relations: ['author']});
     }
 
-    async create (data: IdeaDTO) {
-        const idea = await this.ideaRepository.create(data);
+    async create (userId: string, data: IdeaDTO) {
+        const user = await this.userRepository.findOne({ where: { id: userId }});
+        const idea = await this.ideaRepository.create({...data, author: user });
         await this.ideaRepository.save(idea);
-        return idea;
+        return {...idea, author: idea.author.toResponseObject()};
     }
 
     async read (id: string) {

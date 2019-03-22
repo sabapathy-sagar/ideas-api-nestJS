@@ -1,8 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, CreateDateColumn, Column, BeforeInsert } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, CreateDateColumn, Column, BeforeInsert, OneToMany } from 'typeorm';
 import { text } from 'body-parser';
 import { async } from 'rxjs/internal/scheduler/async';
 import * as bcrypt from 'bcryptjs';
 import * as jwt from 'jsonwebtoken';
+import { IdeaEntity } from 'src/idea/idea.entity';
 
 @Entity('user')
 export class UserEntity {
@@ -20,6 +21,9 @@ export class UserEntity {
 
     @Column('text')
     password: string;
+
+    @OneToMany(type => IdeaEntity, idea => idea.author)
+    ideas: IdeaEntity[]
 
     @BeforeInsert()
     async hashPassword() {
