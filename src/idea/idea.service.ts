@@ -78,4 +78,49 @@ export class IdeaService {
         await this.ideaRepository.delete({ id });
         return idea;
     }
+
+    /**
+     * 
+     * @param id Id of the idea
+     * @param userId 
+     */
+    async bookmark (id: string, userId: string) {
+        const idea = await this.ideaRepository.findOne({ where: {id}});
+        const user = await this.userRepository.findOne({ where: { id: userId }, relations: ['bookmarks']});
+
+        const bookmarkedIdeas = user.bookmarks.filter(bookmark => bookmark.id === idea.id);
+        /**
+         * check if idea is already bookmarked, if not then add bookmark
+         */
+        if (bookmarkedIdeas.length === 0) {
+            user.bookmarks.push(idea);
+            await this.userRepository.save(user);
+        } else {
+            throw new HttpException('Idea already bookmarked', HttpStatus.BAD_REQUEST);
+        }
+
+        return user.toResponseObject();
+    }
+    /**
+     * 
+     * @param id Id of the idea
+     * @param userId 
+     */
+    async unbookmark (id: string, userId: string) {
+        const idea = await this.ideaRepository.findOne({ where: { id }});
+        const user = await this.userRepository.findOne({ where: { id: userId }, relations: ['bookmarks']});
+
+        const bookmarkedIdeas = user.bookmarks.filter(bookmark => bookmark.id === idea.id);
+
+        // if bookmarked ideas exist then remove that book mark
+        if (bookmarkedIdeas.length !== 0) {
+            const otherBookmarkedIdeas  = user.bookmarks.filter(bookmark => bookmark.id !== idea.id);
+            user.bookmarks = otherBookmarkedIdeas;
+            await this.userRepository.save(user);
+        } else {
+            throw new HttpException('Idea already bookmarked', HttpStatus.BAD_REQUEST);
+        }
+
+        return user.toResponseObject();
+    }
 }
