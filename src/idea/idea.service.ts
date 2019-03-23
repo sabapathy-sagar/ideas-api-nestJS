@@ -52,14 +52,16 @@ export class IdeaService {
             throw new HttpException('Not found', HttpStatus.NOT_FOUND);
         }
         this.ensureOwnerShip(idea, userId);
+
         await this.ideaRepository.update({ id }, data);
         //return updated idea
-        idea = await this.ideaRepository.findOne({ where: {id} });
+        idea = await this.ideaRepository.findOne({ where: { id }, relations: ['author'] });
+
         return this.toResponseObj(idea);
     }
 
     async destroy (id: string, userId: string) {
-        const idea = await this.ideaRepository.findOne({ where: {id}, relations: ['author'] });
+        const idea = await this.ideaRepository.findOne({ where: { id }, relations: ['author'] });
         if (!idea) {
             throw new HttpException('Not found', HttpStatus.NOT_FOUND);
         }

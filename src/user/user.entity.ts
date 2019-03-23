@@ -38,6 +38,9 @@ export class UserEntity {
         if (showToken) {
            return  responseObj;
         }
+        if (this.ideas) {
+            return { id, created, username, ideas: this.ideas};
+        }
         return { id, created, username };
     }
 
