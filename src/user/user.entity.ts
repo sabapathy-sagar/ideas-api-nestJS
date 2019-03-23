@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, CreateDateColumn, Column, BeforeInsert, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, CreateDateColumn, Column, BeforeInsert, OneToMany, ManyToMany, JoinTable } from 'typeorm';
 import { text } from 'body-parser';
 import { async } from 'rxjs/internal/scheduler/async';
 import * as bcrypt from 'bcryptjs';
@@ -25,6 +25,10 @@ export class UserEntity {
     @OneToMany(type => IdeaEntity, idea => idea.author)
     ideas: IdeaEntity[]
 
+    @ManyToMany(type => IdeaEntity, { cascade: true })
+    @JoinTable()
+    bookmarks: IdeaEntity[];
+
     @BeforeInsert()
     async hashPassword() {
         this.password = await bcrypt.hash(this.password, 10);
@@ -32,16 +36,19 @@ export class UserEntity {
 
     // send only the necessary data to the client in the response
     // for example, do not send password
-    toResponseObject(showToken: boolean = false) {
+    toResponseObject(showToken: boolean = true) {
         const { id, created, username, token } = this;
-        let responseObj = { id, created, username, token };
+        let responseObj:any = { id, created, username };
         if (showToken) {
-           return  responseObj;
+           responseObj.token = token;
         }
         if (this.ideas) {
-            return { id, created, username, ideas: this.ideas};
+            responseObj.ideas = this.ideas;
         }
-        return { id, created, username };
+        if (this.bookmarks) {
+            responseObj.bookmarks = this.bookmarks;
+        }
+        return responseObj;
     }
 
     // check if the entered password is same as the stored password

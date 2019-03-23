@@ -15,7 +15,16 @@ export class IdeaService {
     ){}
 
     private toResponseObj (idea: IdeaEntity): IdeaRO {
-        return { ...idea, author: idea.author.toResponseObject()};
+        const responseObj: any = { ...idea, author: idea.author.toResponseObject(false)};
+
+        if (responseObj.upvotes) {
+            responseObj.upvotes = idea.upvotes.length;
+        } 
+        if (responseObj.downvotes) {
+            responseObj.downvotes = idea.downvotes.length;
+        } 
+
+        return responseObj;
     }
 
     private ensureOwnerShip (idea: IdeaEntity, userId: string) {
@@ -25,7 +34,7 @@ export class IdeaService {
     }
 
     async showAll (): Promise<IdeaRO[]> {
-        const ideas = await this.ideaRepository.find({ relations: ['author']});
+        const ideas = await this.ideaRepository.find({ relations: ['author', 'upvotes', 'downvotes']});
         return ideas.map(idea => this.toResponseObj(idea));
     }
 
