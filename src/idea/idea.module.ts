@@ -5,10 +5,11 @@ import { IdeaController } from './idea.controller';
 import { IdeaService } from './idea.service';
 import { IdeaEntity } from './idea.entity';
 import { UserEntity } from 'src/user/user.entity';
+import { IdeaResolver } from './idea.resolver';
 
 @Module({
     imports: [TypeOrmModule.forFeature([IdeaEntity, UserEntity])],
   controllers: [IdeaController],
-  providers: [IdeaService]
+  providers: [IdeaService, IdeaResolver]
 })
 export class IdeaModule {}
