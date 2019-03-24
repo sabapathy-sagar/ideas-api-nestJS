@@ -6,7 +6,7 @@ export class IdeaResolver {
     constructor(private ideaService: IdeaService) {}
 
     @Query()
-    ideas () {
-        return this.ideaService.showAll();
+    async ideas () {
+        return await this.ideaService.showAll();
     }
 }

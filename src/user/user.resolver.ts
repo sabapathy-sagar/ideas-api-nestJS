@@ -8,21 +8,21 @@ import { AuthGuard } from 'src/shared/auth.guard';
 export class UserResolver {
     constructor(private userService: UserService) {}
     @Query()
-    users() {
-        return this.userService.showAll();
+    async users() {
+        return await this.userService.showAll();
     } 
 
     @Query()
-    user (@Args('username') username: string) {
-        return this.userService.read(username);
+    async user (@Args('username') username: string) {
+        return await this.userService.read(username);
     }
 
     @Query()
     @UseGuards(new AuthGuard())
     // The user data comes from the user context created in the AuthGuard
-    whoami (@Context('user') user) {
+    async whoami (@Context('user') user) {
         const { username } = user;
-        return this.userService.read(username);
+        return await this.userService.read(username);
     }
 
     @Mutation()
