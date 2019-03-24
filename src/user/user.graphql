@@ -6,6 +6,16 @@ type User {
     ideas: [Idea!]
 }
 
+type Auth {
+    username: String!
+    token: String!
+}
+
 type Query {
     users: [User!]
+}
+
+type Mutation {
+    login(username: String!, password: String!): Auth!
+    register(username: String!, password: String!): Auth!
 }
