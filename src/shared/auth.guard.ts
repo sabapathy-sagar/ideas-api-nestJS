@@ -19,7 +19,7 @@ export class AuthGuard implements CanActivate {
     } 
     // GraphQL
     else {
-      const ctx: any = GqlExecutionContext.create(context);
+      const ctx: any = GqlExecutionContext.create(context).getContext();
 
       if (!ctx.headers.authorization) {
         return Promise.resolve(false);
