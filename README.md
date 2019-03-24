@@ -14,12 +14,13 @@ A reddit/twitter style app to keep track of posted App Ideas.
 
 - Authenticate users
 - Users can CRUD ideas
-- Users can bookmark ideas
+- Users can bookmark/unbookmark ideas
 - Support for REST
 - Support for GraphQL
 
 ### Stack
 
 - Database - PostgreSQL
+- ORM - TypeORM
 - REST API - NestJS
 - GraphQL API - NestJS
