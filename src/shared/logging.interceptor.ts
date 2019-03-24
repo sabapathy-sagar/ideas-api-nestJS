@@ -9,15 +9,23 @@ export class LoggingInterceptor implements NestInterceptor {
         call$: CallHandler
     ) : Observable<any> {
         const req = context.switchToHttp().getRequest();
-        const method = req.method;
-        const url = req.url;
-        const now = Date.now();
 
-        return call$
-            .handle()
-            .pipe(
-            tap(() => Logger.log(`${method} ${url} ${Date.now() - now}ns`, 
-            context.getClass().name))
-        );
+        // since req(request) is a REST specific entity, it breaks the graphql implementation
+        // therefore check if req exists, if yes then its part of the REST call.
+        if (req) {
+            const method = req.method;
+            const url = req.url;
+            const now = Date.now();
+    
+            return call$
+                .handle()
+                .pipe(
+                tap(() => Logger.log(`${method} ${url} ${Date.now() - now}ns`, 
+                context.getClass().name))
+            );
+        } else {
+            return call$.handle();
+        }
+
     }
 }

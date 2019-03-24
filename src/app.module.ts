@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { GraphQLModule } from '@nestjs/graphql';
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -10,7 +11,12 @@ import { UserModule } from './user/user.module';
 
 
 @Module({
-  imports: [TypeOrmModule.forRoot(), IdeaModule, UserModule],
+  imports: [TypeOrmModule.forRoot(),
+            GraphQLModule.forRoot({
+              typePaths: ['./**/*.graphql']
+            }), 
+            IdeaModule, 
+            UserModule],
   controllers: [AppController],
   providers: [AppService, {
     provide: APP_FILTER,
